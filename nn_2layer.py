@@ -25,6 +25,7 @@ class nn:
         self.numOut = numOut
         self.numHidden = numHidden
     
+    
     ''' do the feedforward prediction of a piece of data'''
     def predict(self,input):
         hidden_act = relu(np.dot(input,self.weight1) + self.bias1)
@@ -40,29 +41,33 @@ class nn:
         weight1_grad = 1.0/L*np.dot(hidden_act.T,output_delta)
         bias1_grad = np.mean(output_delta,1)
         
-        hidden_delta = np.dot(output_delta,self.weights2)*drelu(hidden_act)
+        hidden_delta = np.dot(output_delta,self.weight2.T)*drelu(hidden_act)
         weight2_grad = 1.0/L*np.dot(input.T,hidden_delta)
-        bias1_grad = np.mean(hidden_delta,1)
+        bias2_grad = np.mean(hidden_delta,1)
 
         return (weight1_grad, weight2_grad), (bias1_grad,bias2_grad)
     
 
     ''' compute the gradients for all the weights and biases numerically. This is to check
         that the backpropagation equations are correctly implemented '''
-    def numerical_gradient(self,w,input,label,small=0.0001):
-        H,W = np.shape(w)
-        num_grad = np.zeros()
-        for j in range(W):
-            for k in range(H):
-                w[k,j] += small
-                out1 = self.predict(input)[-1]
-                err1 = np.mean(np.sum(0.5*np.square(label - out1),1))
-                w[k,j] -= 2*small
-                out2 = self.predict(input)[-1]
-                err2 = np.mean(np.sum(0.5*np.square(label - act2[-1]),1))
-                num_grad[k,j] = (err1-err2)/(2*small)
-                w[k,j] += small
+    def numerical_gradients(self,input,label,small=0.0001):
+        wstr = ["weight1","weight2"]
+        for i in range(len(wstr)):
+            w = getattr(self,wstr[i])
+            H,W = np.shape(w)
+            num_grad = np.zeros((H,W))
+            for j in range(W):
+                for k in range(H):
+                    w[k,j] += small
+                    out1 = self.predict(input)[-1]
+                    err1 = np.mean(np.sum(0.5*np.square(label - out1),1))
+                    w[k,j] -= 2*small
+                    out2 = self.predict(input)[-1]
+                    err2 = np.mean(np.sum(0.5*np.square(label - out2),1))
+                    num_grad[k,j] = (err1-err2)/(2*small)
+                    w[k,j] += small
         return num_grad
+                    
                     
     ''' update the weights and biases with learningRate*gradient '''
     def update_weights(self,input,label,learningRate=0.01,momentum=0.9):
