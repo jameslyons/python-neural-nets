@@ -49,7 +49,8 @@ class nn:
     
 
     ''' compute the gradients for all the weights and biases numerically. This is to check
-        that the backpropagation equations are correctly implemented '''
+        that the backpropagation equations are correctly implemented. This function only checks
+        the weights, the bias gradients are checked in the same way.'''
     def numerical_gradients(self,input,label,small=0.0001):
         wstr = ["weight1","weight2"]
         for i in range(len(wstr)):
