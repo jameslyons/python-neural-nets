@@ -1,3 +1,8 @@
+''' The point of this file is to demonstrate numerically testing the gradient 
+for the weight matrices and comparing it to the output of backpropagation. This
+file implements a simple single hidden layer neural net. A short blog post
+discussing it is at http://www.jimblog.net/2015/10/numerically-checking-neural-net.html '''
+
 import numpy as np
 
 def relu(x):
